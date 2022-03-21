@@ -24,6 +24,7 @@ it = util.Iterator(Uno)
 it.start()
 Uno.analog[sensor].enable_reporting()
 
+bacon = 0
 egg=0
 
 dhtDevice = adafruit_dht.DHT11(board.D4, use_pulseio=False) #Init the DHT
@@ -93,12 +94,17 @@ def makeCSVwork():
 def soilAndwater():
     time.sleep(0.01)#If this isn't here, my Pi loses the ability to math
     global moist
+    global bacon
     moist=int(Uno.analog[sensor].read()*1000)#Weird fudge math as the pyfirmata make the read analog value into a float between 0.0-1.000
-    print(moist)
-    if moist < 200:#Will need to be tuned for the individual plant.
+    print(bacon)
+    if moist < 500:#Will need to be tuned for the individual plant.
         Uno.digital[7].write(0)
-    else:
+        bacon = 10
+    elif bacon == 0:
         Uno.digital[7].write(1)
+    else:
+        bacon=bacon - 1
+        
 
 while True:
     #About every second, we refresh the data being sent to the lcd, and if we need to give the plant water.
